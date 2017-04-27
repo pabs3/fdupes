@@ -45,6 +45,10 @@ exclude zero-length files from consideration
 .B -f --omitfirst
 omit the first file in each set of matches
 .TP
+.B -0 --null
+use the NUL character (\\0) as a separator instead of a newline (\\n).
+This is useful when passing the results to other shell commands like xargs -0.
+.TP
 .B -A --nohidden
 exclude hidden files from consideration
 .TP

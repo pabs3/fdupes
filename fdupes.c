@@ -797,17 +797,17 @@ void printmatches(file_t *files)
         if (ISFLAG(flags, F_SHOWTIME))
           printf("%s ", fmtmtime(files->d_name));
 	if (ISFLAG(flags, F_DSAMELINE)) escapefilename("\\ ", &files->d_name);
-	printf("%s%c", files->d_name, ISFLAG(flags, F_DSAMELINE)?' ':'\n');
+	printf("%s%c", files->d_name, ISFLAG(flags, F_DSAMELINE)?' ':ISFLAG(flags, F_NUL)?'\0':'\n');
       }
       tmpfile = files->duplicates;
       while (tmpfile != NULL) {
         if (ISFLAG(flags, F_SHOWTIME))
           printf("%s ", fmtmtime(tmpfile->d_name));
 	if (ISFLAG(flags, F_DSAMELINE)) escapefilename("\\ ", &tmpfile->d_name);
-	printf("%s%c", tmpfile->d_name, ISFLAG(flags, F_DSAMELINE)?' ':'\n');
+	printf("%s%c", tmpfile->d_name, ISFLAG(flags, F_DSAMELINE)?' ':ISFLAG(flags, F_NUL)?'\0':'\n');
 	tmpfile = tmpfile->duplicates;
       }
-      printf("\n");
+      printf("%c", ISFLAG(flags, F_NUL)?'\0':'\n');
 
     }
       
@@ -1278,6 +1278,7 @@ int main(int argc, char **argv) {
   static struct option long_options[] = 
   {
     { "omitfirst", 0, 0, 'f' },
+    { "null", 0, 0, '0' },
     { "recurse", 0, 0, 'r' },
     { "recurse:", 0, 0, 'R' },
     { "quiet", 0, 0, 'q' },
@@ -1315,7 +1316,7 @@ int main(int argc, char **argv) {
 
   oldargv = cloneargs(argc, argv);
 
-  while ((opt = GETOPT(argc, argv, "frRq1StsHG:L:nAdPvhNImpo:il:"
+  while ((opt = GETOPT(argc, argv, "f0rRq1StsHG:L:nAdPvhNImpo:il:"
 #ifdef HAVE_GETOPT_H
           , long_options, NULL
 #endif
@@ -1323,6 +1324,9 @@ int main(int argc, char **argv) {
     switch (opt) {
     case 'f':
       SETFLAG(flags, F_OMITFIRST);
+      break;
+    case '0':
+      SETFLAG(flags, F_NUL);
       break;
     case 'r':
       SETFLAG(flags, F_RECURSE);
